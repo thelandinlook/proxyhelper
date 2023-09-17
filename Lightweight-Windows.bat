@@ -1,19 +1,26 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set "searchPath=C:\Path\to\your\MP4\files"
+:: Initialize counter
+set /a count=0
 
-for /r "%searchPath%" %%F in (*.mp4) do (
-    set "filename=%%~nF"
-    set "extension=%%~xF"
+:: Lines with 'for /r' walks through the directory tree
+for /r %%F in (*S03*) do (
 
-    if "!filename:S03=!" neq "!filename!" (        
-        set "newFilename=!filename:S03=!"
-        ren "%%F" "!newFilename!!extension!"
-        echo Renamed file: "%%~nxF"
+    :: %%~nF extracts the name part of the full path stored in %%F
+    set "name=%%~nF"
+
+    :: Verify if the file name has changed
+    if not "!name:S03=!" == "%%~nF" (
+        :: This line does the actual renaming. A simple string substitution is performed to remove 'S03' from the file name.
+        ren "%%F" "!name:S03=%%~xF!"
+
+        :: Increase counter
+        set /a count+=1
     )
 )
 
-echo All matching files renamed successfully.
+:: Print out how many files were renamed
+echo !count! files were renamed.
 
 pause
