@@ -1,13 +1,18 @@
 #!/bin/bash
 
-search_path="/path/to/your/MP4/files"
+# Counter variable
+count=0
 
-find "$search_path" -type f -name "*S03*.mp4" | while IFS= read -r file; do
-    filename=$(basename "$file")
-    new_filename=$(echo "$filename" | sed 's/S03//')
-    new_path=$(dirname "$file")/"$new_filename"
-    mv "$file" "$new_path"
-    echo "Renamed file: $new_filename"
+# Find all files in current directory and sub directories
+for file in $(find . -type f -name '*S03*')
+do
+    # Rename the files and delete 'S03' from their names
+    new_name=${file/'S03'/}
+    mv "$file" "$new_name"
+
+    # Increase counter
+    ((count++))
 done
 
-echo "All matching files renamed successfully."
+# Print out how many files were renamed
+echo "$count files were renamed."
